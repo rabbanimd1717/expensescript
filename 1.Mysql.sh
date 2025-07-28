@@ -2,7 +2,7 @@
 
 USER_ID=$(id -u)
 TIMESTAMP=$(date +%F-%H-%M-%S)
-SCRIPT_NAME=$($0 | awk -d "." -f2)
+SCRIPT_NAME=$(echo $0 | awk -d "." -f2)
 LOGFILES=/tmp/$SCRIPT_NAME-$TIMESTAMP.log
 
 VALIDATE_FUN(){
