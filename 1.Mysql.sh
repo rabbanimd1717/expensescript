@@ -5,13 +5,22 @@ TIMESTAMP=$(date +%F-%H-%M-%S)
 SCRIPT_NAME=$(echo $0 | cut -d "." -f2)
 LOGFILES=/tmp/$SCRIPT_NAME-$TIMESTAMP.log
 
+echo "setup root password"
+read -s dbpassword
+
+#colors
+R=\e"[31m"
+G=\e"[32m"
+Y=\e"[33m"
+N=\e"[0"
+
 VALIDATE_FUN(){
     if [ $1 -ne 0 ]
     then
-        echo "$2 is FAILURE"
+        echo "$2 is $R FAILURE $N"
         exit 1
     else
-        echo "$2 is SUCCESS"
+        echo "$2 is $G SUCCESS $N"
     fi
 }
 
@@ -33,5 +42,16 @@ VALIDATE_FUN $? "Mysql system enabaled"
 systemctl start mysqld &>>LOGFILES
 VALIDATE_FUN $? "Mysql is start"
 
-mysql_secure_installation --set-root-pass ExpenseApp@1 &>>LOGFILES
-VALIDATE_FUN $? "Password setup to enter the db"
+# mysql_secure_installation --set-root-pass ExpenseApp@1 &>>LOGFILES
+# VALIDATE_FUN $? "Password setup to enter the db"
+
+mysql -h 54.237.224.140 -u root -p${dbpassword} -e 'SHOW DATABASES;'
+if [ $? -ne 0 ]
+then 
+    mysql_secure_installation --set-root-pass ${dbpassword} &>>LOGFILES
+    VALIDATE_FUN $1 "setup root password"
+else
+    echo "Already Setup"
+    exit 1
+fi
+    
