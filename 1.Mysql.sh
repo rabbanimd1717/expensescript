@@ -2,17 +2,15 @@
 
 USER_ID=$(id -u)
 TIMESTAMP=$(date +%F-%H-%M-%S)
-SCRIPT_NAME=$(echo $0 | cut -d "." -f2)
-LOGFILES=/tmp/$SCRIPT_NAME-$TIMESTAMP.log
+SCRIPTING_NAME=$(echo $0 | cut -d "." -f2)
+LOG_FILE=/tmp/$SCRIPTING_NAME-$TIMESTAMP.log
 
-echo "setup root password"
-read -s dbpassword
-
-#colors
 R="\e[31m"
 G="\e[32m"
 Y="\e[33m"
 N="\e[0m"
+echo "Please enter DB secure password"
+read -s DB_PASSWORD
 
 VALIDATE_FUN(){
     if [ $1 -ne 0 ]
@@ -24,34 +22,38 @@ VALIDATE_FUN(){
     fi
 }
 
-
 if [ $USER_ID -eq 0 ]
-then 
-    echo "This is SUPER USER GO TO INSTALL PACKAGES"
+then
+    echo -e "$Y INSTALLING PACKAGE $N"
 else
-    echo "THIS IS NOT SUPER USER PLEASE STOP OF THIS TO INSTALL PACKAGES"
+    echo "NEED TO SUDO USER FOR THIS PACKAGE INSTALLATION"
     exit 1
 fi
 
-dnf install mysql-server -y &>>LOGFILES
-VALIDATE_FUN $? "INSTALLING MYSQL PACKAGE"
 
-systemctl enable mysqld &>>LOGFILES
-VALIDATE_FUN $? "Mysql system enabaled"
+dnf install mysql-server -y >> $LOG_FILE
 
-systemctl start mysqld &>>LOGFILES
-VALIDATE_FUN $? "Mysql is start"
+VALIDATE_FUN $? "INSTALLING MYSQL"
 
-# mysql_secure_installation --set-root-pass ExpenseApp@1 &>>LOGFILES
-# VALIDATE_FUN $? "Password setup to enter the db"
+systemctl enable mysqld >> $LOG_FILE
 
-mysql -h 54.237.224.140 -u root -p
-if [ $? -ne 0 ]
-then 
-    mysql_secure_installation --set-root-pass &>>LOGFILES
-    VALIDATE_FUN $? "setup root password"
-else
-    echo "Already Setup"
+VALIDATE_FUN $? "ENABLED MYSQL"
+
+systemctl start mysqld >> $LOG_FILE
+
+VALIDATE_FUN $? "START MYSQL"
+
+# mysql_secure_installation --set-root-pass ExpenseApp@1 >> $LOG_FILE
+
+mysql -h 172.31.19.102 -uroot -p${DB_PASSWORD} -e "SHOW DATABASES;"
+
+if [ $? -eq 0 ]
+then
+    echo "already setup"
     exit 1
+else
+    mysql_secure_installation --set-root-pass ${DB_PASSWORD} &>> $LOG_FILE
+    VALIDATE_FUN $? "SETUP ROOT PASSWORD"
 fi
-    
+
+mkdir -p rabbani
