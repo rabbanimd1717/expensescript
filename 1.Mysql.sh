@@ -9,10 +9,10 @@ echo "setup root password"
 read -s dbpassword
 
 #colors
-R=\e"[31m"
-G=\e"[32m"
-Y=\e"[33m"
-N=\e"[0"
+R="\e[31m"
+G="\e[32m"
+Y="\e[33m"
+N="\e[0"
 
 VALIDATE_FUN(){
     if [ $1 -ne 0 ]
