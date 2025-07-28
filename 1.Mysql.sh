@@ -12,7 +12,7 @@ read -s dbpassword
 R="\e[31m"
 G="\e[32m"
 Y="\e[33m"
-N="\e[0"
+N="\e[0m"
 
 VALIDATE_FUN(){
     if [ $1 -ne 0 ]
