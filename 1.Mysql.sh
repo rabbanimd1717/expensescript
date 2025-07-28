@@ -49,7 +49,7 @@ mysql -h 54.237.224.140 -u root -p${dbpassword} -e 'SHOW DATABASES;'
 if [ $? -ne 0 ]
 then 
     mysql_secure_installation --set-root-pass ${dbpassword} &>>LOGFILES
-    VALIDATE_FUN $1 "setup root password"
+    VALIDATE_FUN $? "setup root password"
 else
     echo "Already Setup"
     exit 1
