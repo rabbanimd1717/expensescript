@@ -1,6 +1,9 @@
 #!/bin/bash
 
 USER_ID=$(id -u)
+TIMESTAMP=$(date +%F-%H-%M-%S)
+SCRIPT_NAME=$($0 | awk -d "." -f2)
+LOGFILES=/tmp/$SCRIPT_NAME-$TIMESTAMP.log
 
 VALIDATE_FUN(){
     if [ $1 -ne 0 ]
@@ -21,14 +24,14 @@ else
     exit 1
 fi
 
-dnf install mysql-server -y
+dnf install mysql-server -y &>>LOGFILES
 VALIDATE_FUN $? "INSTALLING MYSQL PACKAGE"
 
-systemctl enable mysqld
+systemctl enable mysqld &>>LOGFILES
 VALIDATE_FUN $? "Mysql system enabaled"
 
-systemctl start mysqld
+systemctl start mysqld &>>LOGFILES
 VALIDATE_FUN $? "Mysql is start"
 
-mysql_secure_installation --set-root-pass ExpenseApp@1
+mysql_secure_installation --set-root-pass ExpenseApp@1 &>>LOGFILES
 VALIDATE_FUN $? "Password setup to enter the db"
