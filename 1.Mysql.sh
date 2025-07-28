@@ -13,9 +13,9 @@ VALIDATE_FUN(){
 }
 
 
-if [ USER_ID -eq 0 ]
+if [ $USER_ID -eq 0 ]
 then 
-    echo "This is SUPER USER GOT TO INSTALL PACKAGES"
+    echo "This is SUPER USER GO TO INSTALL PACKAGES"
 else
     echo "THIS IS NOT SUPER USER PLEASE STOP OF THIS TO INSTALL PACKAGES"
     exit 1
