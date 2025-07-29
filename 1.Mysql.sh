@@ -1,16 +1,133 @@
-#!/bin/bash
+# #!/bin/bash
+
+# # USER_ID=$(id -u)
+# # TIMESTAMP=$(date +%F-%H-%M-%S)
+# # SCRIPTING_NAME=$(echo $0 | cut -d "." -f2)
+# # LOG_FILE=/tmp/$SCRIPTING_NAME-$TIMESTAMP.log
+
+# # R="\e[31m"
+# # G="\e[32m"
+# # Y="\e[33m"
+# # N="\e[0m"
+# # echo "Please enter DB secure password"
+# # read -s DB_PASSWORD
+
+# # VALIDATE_FUN(){
+# #     if [ $1 -ne 0 ]
+# #     then
+# #         echo -e "$2 is $R FAILURE $N"
+# #         exit 1
+# #     else
+# #         echo -e "$2 is $G SUCCESS $N"
+# #     fi
+# # }
+
+# # if [ $USER_ID -eq 0 ]
+# # then
+# #     echo -e "$Y INSTALLING PACKAGE $N"
+# # else
+# #     echo "NEED TO SUDO USER FOR THIS PACKAGE INSTALLATION"
+# #     exit 1
+# # fi
+
+
+# # dnf install mysql-server -y >> $LOG_FILE
+
+# # VALIDATE_FUN $? "INSTALLING MYSQL"
+
+# # systemctl enable mysqld >> $LOG_FILE
+
+# # VALIDATE_FUN $? "ENABLED MYSQL"
+
+# # systemctl start mysqld >> $LOG_FILE
+
+# # VALIDATE_FUN $? "START MYSQL"
+
+# # # mysql_secure_installation --set-root-pass ExpenseApp@1 >> $LOG_FILE
+
+# # mysql -h 172.31.45.100 -uroot -p${DB_PASSWORD} -e 'SHOW DATABASES;' &>>LOG_FILE
+
+# # if [ $? -eq 0 ]
+# # then
+# #     echo "already setup"
+# # else
+# #     mysql_secure_installation --set-root-pass ${DB_PASSWORD} &>> $LOG_FILE
+# #     VALIDATE_FUN $? "SETUP ROOT PASSWORD"
+# # fi
+
+# # mkdir -p rabbani
+# # !/bin/bash
+
+# # USERID=$(id -u)
+# # TIMESTAMP=$(date +%F-%H-%M-%S)
+# # SCRIPT_NAME=$(echo $0 | cut -d "." -f1)
+# # LOGFILE=/tmp/$SCRIPT_NAME-$TIMESTAMP.log
+# # R="\e[31m"
+# # G="\e[32m"
+# # Y="\e[33m"
+# # N="\e[0m"
+# # echo "Please enter DB password:"
+# # read -s mysql_root_password
+
+# # VALIDATE(){
+# #    if [ $1 -ne 0 ]
+# #    then
+# #         echo -e "$2...$R FAILURE $N"
+# #         exit 1
+# #     else
+# #         echo -e "$2...$G SUCCESS $N"
+# #     fi
+# # }
+
+# # if [ $USERID -ne 0 ]
+# # then
+# #     echo "Please run this script with root access."
+# #     exit 1 # manually exit if error comes.
+# # else
+# #     echo "You are super user."
+# # fi
+
+
+# # dnf install mysql-server -y &>>$LOGFILE
+# # VALIDATE $? "Installing MySQL Server"
+
+# # systemctl enable mysqld &>>$LOGFILE
+# # VALIDATE $? "Enabling MySQL Server"
+
+# # systemctl start mysqld &>>$LOGFILE
+# # VALIDATE $? "Starting MySQL Server"
+
+# # # mysql_secure_installation --set-root-pass ExpenseApp@1 &>>$LOGFILE
+# # # VALIDATE $? "Setting up root password"
+
+# # #Below code will be useful for idempotent nature
+# # mysql -h 172.31.45.100 -uroot -p${mysql_root_password} -e 'show databases;' &>>$LOGFILE
+# # if [ $? -ne 0 ]
+# # then
+# #     mysql_secure_installation --set-root-pass ${mysql_root_password} &>>$LOGFILE
+# #     VALIDATE $? "MySQL Root password Setup"
+# # else
+# #     echo -e "MySQL Root password is already setup...$Y SKIPPING $N"
+# # fi
+
+
+
+
+# #!/bin/bash
 
 # USER_ID=$(id -u)
 # TIMESTAMP=$(date +%F-%H-%M-%S)
-# SCRIPTING_NAME=$(echo $0 | cut -d "." -f2)
-# LOG_FILE=/tmp/$SCRIPTING_NAME-$TIMESTAMP.log
+# SCRIPT_NAME=$(echo $0 | cut -d "." -f2)
+# LOGFILES=/tmp/$SCRIPT_NAME-$TIMESTAMP.log
 
+# echo "setup root password"
+# read -s dbpassword
+
+# #colors
 # R="\e[31m"
 # G="\e[32m"
 # Y="\e[33m"
 # N="\e[0m"
-# echo "Please enter DB secure password"
-# read -s DB_PASSWORD
 
 # VALIDATE_FUN(){
 #     if [ $1 -ne 0 ]
@@ -22,151 +139,89 @@
 #     fi
 # }
 
+
 # if [ $USER_ID -eq 0 ]
-# then
-#     echo -e "$Y INSTALLING PACKAGE $N"
+# then 
+#     echo "This is SUPER USER GO TO INSTALL PACKAGES"
 # else
-#     echo "NEED TO SUDO USER FOR THIS PACKAGE INSTALLATION"
+#     echo "THIS IS NOT SUPER USER PLEASE STOP OF THIS TO INSTALL PACKAGES"
 #     exit 1
 # fi
 
+# dnf install mysql-server -y &>>$LOGFILES
+# VALIDATE_FUN $? "INSTALLING MYSQL PACKAGE"
 
-# dnf install mysql-server -y >> $LOG_FILE
+# systemctl enable mysqld &>>$LOGFILES
+# VALIDATE_FUN $? "Mysql system enabaled"
 
-# VALIDATE_FUN $? "INSTALLING MYSQL"
+# systemctl start mysqld &>>$LOGFILES
+# VALIDATE_FUN $? "Mysql is start"
 
-# systemctl enable mysqld >> $LOG_FILE
+# # mysql_secure_installation --set-root-pass ExpenseApp@1 &>>LOGFILES
+# # VALIDATE_FUN $? "Password setup to enter the db"
 
-# VALIDATE_FUN $? "ENABLED MYSQL"
-
-# systemctl start mysqld >> $LOG_FILE
-
-# VALIDATE_FUN $? "START MYSQL"
-
-# # mysql_secure_installation --set-root-pass ExpenseApp@1 >> $LOG_FILE
-
-# mysql -h 172.31.45.100 -uroot -p${DB_PASSWORD} -e 'SHOW DATABASES;' &>>LOG_FILE
-
-# if [ $? -eq 0 ]
-# then
-#     echo "already setup"
-# else
-#     mysql_secure_installation --set-root-pass ${DB_PASSWORD} &>> $LOG_FILE
-#     VALIDATE_FUN $? "SETUP ROOT PASSWORD"
-# fi
-
-# mkdir -p rabbani
-# !/bin/bash
-
-# USERID=$(id -u)
-# TIMESTAMP=$(date +%F-%H-%M-%S)
-# SCRIPT_NAME=$(echo $0 | cut -d "." -f1)
-# LOGFILE=/tmp/$SCRIPT_NAME-$TIMESTAMP.log
-# R="\e[31m"
-# G="\e[32m"
-# Y="\e[33m"
-# N="\e[0m"
-# echo "Please enter DB password:"
-# read -s mysql_root_password
-
-# VALIDATE(){
-#    if [ $1 -ne 0 ]
-#    then
-#         echo -e "$2...$R FAILURE $N"
-#         exit 1
-#     else
-#         echo -e "$2...$G SUCCESS $N"
-#     fi
-# }
-
-# if [ $USERID -ne 0 ]
-# then
-#     echo "Please run this script with root access."
-#     exit 1 # manually exit if error comes.
-# else
-#     echo "You are super user."
-# fi
-
-
-# dnf install mysql-server -y &>>$LOGFILE
-# VALIDATE $? "Installing MySQL Server"
-
-# systemctl enable mysqld &>>$LOGFILE
-# VALIDATE $? "Enabling MySQL Server"
-
-# systemctl start mysqld &>>$LOGFILE
-# VALIDATE $? "Starting MySQL Server"
-
-# # mysql_secure_installation --set-root-pass ExpenseApp@1 &>>$LOGFILE
-# # VALIDATE $? "Setting up root password"
-
-# #Below code will be useful for idempotent nature
-# mysql -h 172.31.45.100 -uroot -p${mysql_root_password} -e 'show databases;' &>>$LOGFILE
+# mysql -h 172.31.45.100 -u root -p${dbpassword} -e 'SHOW DATABASES;' &>>$LOGFILES
 # if [ $? -ne 0 ]
-# then
-#     mysql_secure_installation --set-root-pass ${mysql_root_password} &>>$LOGFILE
-#     VALIDATE $? "MySQL Root password Setup"
+# then 
+#     mysql_secure_installation --set-root-pass ${dbpassword} &>>$LOGFILES
+#     VALIDATE_FUN $? "setup root password"
 # else
-#     echo -e "MySQL Root password is already setup...$Y SKIPPING $N"
+#     echo "Already Setup"
+#     exit 1
 # fi
-
-
+    
 
 
 #!/bin/bash
 
-USER_ID=$(id -u)
+USERID=$(id -u)
 TIMESTAMP=$(date +%F-%H-%M-%S)
-SCRIPT_NAME=$(echo $0 | cut -d "." -f2)
-LOGFILES=/tmp/$SCRIPT_NAME-$TIMESTAMP.log
-
-echo "setup root password"
-read -s dbpassword
-
-#colors
+SCRIPT_NAME=$(echo $0 | cut -d "." -f1)
+LOGFILE=/tmp/$SCRIPT_NAME-$TIMESTAMP.log
 R="\e[31m"
 G="\e[32m"
 Y="\e[33m"
 N="\e[0m"
+echo "Please enter DB password:"
+read -s mysql_root_password
 
-VALIDATE_FUN(){
-    if [ $1 -ne 0 ]
-    then
-        echo -e "$2 is $R FAILURE $N"
+VALIDATE(){
+   if [ $1 -ne 0 ]
+   then
+        echo -e "$2...$R FAILURE $N"
         exit 1
     else
-        echo -e "$2 is $G SUCCESS $N"
+        echo -e "$2...$G SUCCESS $N"
     fi
 }
 
-
-if [ $USER_ID -eq 0 ]
-then 
-    echo "This is SUPER USER GO TO INSTALL PACKAGES"
+if [ $USERID -ne 0 ]
+then
+    echo "Please run this script with root access."
+    exit 1 # manually exit if error comes.
 else
-    echo "THIS IS NOT SUPER USER PLEASE STOP OF THIS TO INSTALL PACKAGES"
-    exit 1
+    echo "You are super user."
 fi
 
-dnf install mysql-server -y &>>$LOGFILES
-VALIDATE_FUN $? "INSTALLING MYSQL PACKAGE"
 
-systemctl enable mysqld &>>$LOGFILES
-VALIDATE_FUN $? "Mysql system enabaled"
+dnf install mysql-server -y &>>$LOGFILE
+VALIDATE $? "Installing MySQL Server"
 
-systemctl start mysqld &>>$LOGFILES
-VALIDATE_FUN $? "Mysql is start"
+systemctl enable mysqld &>>$LOGFILE
+VALIDATE $? "Enabling MySQL Server"
 
-# mysql_secure_installation --set-root-pass ExpenseApp@1 &>>LOGFILES
-# VALIDATE_FUN $? "Password setup to enter the db"
+systemctl start mysqld &>>$LOGFILE
+VALIDATE $? "Starting MySQL Server"
 
-mysql -h 172.31.45.100 -u root -p${dbpassword} -e 'SHOW DATABASES;' &>>$LOGFILES
+# mysql_secure_installation --set-root-pass ExpenseApp@1 &>>$LOGFILE
+# VALIDATE $? "Setting up root password"
+
+#Below code will be useful for idempotent nature
+mysql -h 172.31.45.100 -uroot -p${mysql_root_password} -e 'show databases;' &>>$LOGFILE
 if [ $? -ne 0 ]
-then 
-    mysql_secure_installation --set-root-pass ${dbpassword} &>>$LOGFILES
-    VALIDATE_FUN $? "setup root password"
+then
+    mysql_secure_installation --set-root-pass ${mysql_root_password} &>>$LOGFILE
+    VALIDATE $? "MySQL Root password Setup"
 else
-    echo "Already Setup"
-    exit 1
+    echo -e "MySQL Root password is already setup...$Y SKIPPING $N"
 fi
-    
