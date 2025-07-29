@@ -45,7 +45,7 @@ VALIDATE_FUN $? "START MYSQL"
 
 # mysql_secure_installation --set-root-pass ExpenseApp@1 >> $LOG_FILE
 
-mysql -h 172.31.45.100 -uroot -p${DB_PASSWORD} -e "SHOW DATABASES;"
+mysql -h 172.31.45.100 -uroot -p${DB_PASSWORD} -e 'SHOW DATABASES;'
 
 if [ $? -eq 0 ]
 then
