@@ -71,7 +71,7 @@ VALIDATE_FUN $? "system reload, start and enable"
 dnf install mysql -y &>>$LOGFILES
 VALIDATE_FUN $? "Installing mysql client to connect db from backend"
 
-mysql -h <172.31.45.100> -uroot -p${password} < /app/schema/backend.sql &>>$LOGFILES
+mysql -h 172.31.45.100 -uroot -p${password} < /app/schema/backend.sql &>>$LOGFILES
 VALIDATE_FUN $? "schema loading"
 
 systemctl restart backend &>>$LOGFILES
