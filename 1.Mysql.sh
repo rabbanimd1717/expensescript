@@ -160,7 +160,7 @@ VALIDATE_FUN $? "Mysql is start"
 # mysql_secure_installation --set-root-pass ExpenseApp@1 &>>LOGFILES
 # VALIDATE_FUN $? "Password setup to enter the db"
 
-mysql -h 54.237.224.140 -u root -p -p${dbpassword} -e 'SHOW DATABASES;' &>>$LOGFILES
+mysql -h 172.31.45.100 -u root -p${dbpassword} -e 'SHOW DATABASES;' &>>$LOGFILES
 if [ $? -ne 0 ]
 then 
     mysql_secure_installation --set-root-pass ${dbpassword} &>>$LOGFILES
