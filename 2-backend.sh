@@ -153,7 +153,7 @@ VALIDATE_FUN $? "UNZIP THE FILE"
 npm install &>>$LOG_FILE
 VALIDATE_FUN $? "NPM DEPENDENCIES INSTALLING"
 
-cp /home/ec2-user/expense_script/backend.service /etc/systemd/system/backend.service
+cp /home/ec2-user/expensescript/backend.service /etc/systemd/system/backend.service
 VALIDATE_FUN $? "COPIED backend.service"
 
 systemctl daemon-reload &>>$LOG_FILE
