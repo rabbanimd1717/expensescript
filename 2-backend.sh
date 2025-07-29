@@ -41,8 +41,15 @@ VALIDATE_FUN $? "Enable nodejs version of 20"
 dnf install nodejs -y &>>$LOGFILES
 VALIDATE_FUN $? "Installing nodejs"
 
-useradd expense
-VALIDATE_FUN $? "user added"
+#useradd expense
+id expense
+if [ $? -eq 0 ]
+then
+    echo -e "$G user already existing then $Y skipping $N"
+else
+    useradd expense
+    VALIDATE_FUN $? "user added"
+fi
 
 mkdir -p /app
 VALIDATE_FUN $? "directory created name is app"
@@ -71,7 +78,7 @@ VALIDATE_FUN $? "system reload, start and enable"
 dnf install mysql -y &>>$LOGFILES
 VALIDATE_FUN $? "Installing mysql client to connect db from backend"
 
-mysql -h 172.31.45.100 -uroot -p${password} < /app/schema/backend.sql &>>$LOGFILES
+mysql -h 54.237.224.140 -uroot -p${password} < /app/schema/backend.sql &>>$LOGFILES
 VALIDATE_FUN $? "schema loading"
 
 systemctl restart backend &>>$LOGFILES
