@@ -42,7 +42,7 @@ dnf install nodejs -y &>>$LOGFILES
 VALIDATE_FUN $? "Installing nodejs"
 
 #useradd expense
-id expense
+id expense &>>$LOGFILES
 if [ $? -eq 0 ]
 then
     echo -e "$G user already existing then $Y skipping $N"
@@ -78,7 +78,7 @@ VALIDATE_FUN $? "system reload, start and enable"
 dnf install mysql -y &>>$LOGFILES
 VALIDATE_FUN $? "Installing mysql client to connect db from backend"
 
-mysql -h 54.237.224.140 -uroot -p${password} < /app/schema/backend.sql &>>$LOGFILES
+mysql -h 172.31.45.100 -uroot -p${password} < /app/schema/backend.sql &>>$LOGFILES
 VALIDATE_FUN $? "schema loading"
 
 systemctl restart backend &>>$LOGFILES
