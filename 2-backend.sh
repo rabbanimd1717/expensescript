@@ -87,92 +87,176 @@
 
 #!/bin/bash
 
-USER_ID=$(id -u)
-TIMESTAMP=$(date +%F-%H-%M-%S)
-SCRIPT_NAME=$(echo $0 | cut -d "-" -f2)
-LOG_FILE=/tmp/$SCRIPT_NAME-$TIMESTAMP.log
+# USER_ID=$(id -u)
+# TIMESTAMP=$(date +%F-%H-%M-%S)
+# SCRIPT_NAME=$(echo $0 | cut -d "-" -f2)
+# LOG_FILE=/tmp/$SCRIPT_NAME-$TIMESTAMP.log
 
+# R="\e[31m"
+# G="\e[32m"
+# Y="\e[33m"
+# N="\e[0m"
+
+# echo "enter secret password of mysql"
+# read -s mysqlpassword
+
+# VALIDATE_FUN(){
+#     if [ $1 -ne 0 ]
+#     then
+#         echo -e "$2 is $R FAILURE $N"
+#         exit 1
+#     else
+#         echo -e "$2 is $G SUCCESS $N"
+#     fi
+# }
+
+# if [ $USER_ID -ne 0 ]
+# then
+#     echo "NEED TO DO WITH SUPER USER DOWNLOAD THIS PACKAGE"
+#     exit 1
+# else
+#     echo "THIS IS SUPER USER INSTALLING PACKAGE WITHOUT INTERUPPTIONS"
+# fi
+
+# dnf module disable nodejs -y &>>$LOG_FILE
+
+# VALIDATE_FUN $? "DISABLING NODEJS"
+
+# dnf module enable nodejs:20 -y &>>$LOG_FILE
+
+# VALIDATE_FUN $? "ENABLING NODEJS"
+
+# dnf install nodejs -y &>>$LOG_FILE
+
+# VALIDATE_FUN $? "INSTALLING NODEJS"
+
+# id expense &>>$LOG_FILE
+
+# if [ $? -ne 0 ]
+# then
+#     useradd expense &>>$LOG_FILE
+#     VALIDATE_FUN $? "USER CREATING"
+# else
+#     echo -e "$G USER ALREADY EXISTING $Y SKIPPING $N"
+# fi
+
+# mkdir -p /app &>>$LOG_FILE
+
+# curl -o /tmp/backend.zip https://expense-builds.s3.us-east-1.amazonaws.com/expense-backend-v2.zip &>> $LOG_FILE
+
+# cd /app
+# rm -rf /app/*
+
+# unzip /tmp/backend.zip &>>$LOG_FILE
+# VALIDATE_FUN $? "UNZIP THE FILE"
+
+# npm install &>>$LOG_FILE
+# VALIDATE_FUN $? "NPM DEPENDENCIES INSTALLING"
+
+# cp /home/ec2-user/expensescript/backend.service /etc/systemd/system/backend.service
+# VALIDATE_FUN $? "COPIED backend.service"
+
+# systemctl daemon-reload &>>$LOG_FILE
+
+# systemctl start backend &>>$LOG_FILE
+
+# systemctl enable backend &>>$LOG_FILE
+# VALIDATE_FUN $? "daemon reload, start and enable successfully"
+
+# dnf install mysql -y &>> $LOG_FILE
+# VALIDATE_FUN $? "INSTALL MYSQL IN BACKEND SCRIPT"
+
+# mysql -h 172.31.45.100 -uroot -p${mysqlpassword} < /app/schema/backend.sql &>>$LOG_FILE
+# VALIDATE_FUN $? "attach the mysql with backend"
+
+# systemctl restart backend &>>$LOG_FILE
+# VALIDATE_FUN $? "Restarting the backend"
+
+# dnf install git -y &>>$LOG_FILE
+# VALIDATE_FUN $? "INSTALLIN GIT"
+
+
+#!/bin/bash
+
+USERID=$(id -u)
+TIMESTAMP=$(date +%F-%H-%M-%S)
+SCRIPT_NAME=$(echo $0 | cut -d "." -f1)
+LOGFILE=/tmp/$SCRIPT_NAME-$TIMESTAMP.log
 R="\e[31m"
 G="\e[32m"
 Y="\e[33m"
 N="\e[0m"
+echo "Please enter DB password:"
+read -s mysql_root_password
 
-echo "enter secret password of mysql"
-read -s mysqlpassword
-
-VALIDATE_FUN(){
-    if [ $1 -ne 0 ]
-    then
-        echo -e "$2 is $R FAILURE $N"
+VALIDATE(){
+   if [ $1 -ne 0 ]
+   then
+        echo -e "$2...$R FAILURE $N"
         exit 1
     else
-        echo -e "$2 is $G SUCCESS $N"
+        echo -e "$2...$G SUCCESS $N"
     fi
 }
 
-if [ $USER_ID -ne 0 ]
+if [ $USERID -ne 0 ]
 then
-    echo "NEED TO DO WITH SUPER USER DOWNLOAD THIS PACKAGE"
-    exit 1
+    echo "Please run this script with root access."
+    exit 1 # manually exit if error comes.
 else
-    echo "THIS IS SUPER USER INSTALLING PACKAGE WITHOUT INTERUPPTIONS"
+    echo "You are super user."
 fi
 
-dnf module disable nodejs -y &>>$LOG_FILE
+dnf module disable nodejs -y &>>$LOGFILE
+VALIDATE $? "Disabling default nodejs"
 
-VALIDATE_FUN $? "DISABLING NODEJS"
+dnf module enable nodejs:20 -y &>>$LOGFILE
+VALIDATE $? "Enabling nodejs:20 version"
 
-dnf module enable nodejs:20 -y &>>$LOG_FILE
+dnf install nodejs -y &>>$LOGFILE
+VALIDATE $? "Installing nodejs"
 
-VALIDATE_FUN $? "ENABLING NODEJS"
-
-dnf install nodejs -y &>>$LOG_FILE
-
-VALIDATE_FUN $? "INSTALLING NODEJS"
-
-id expense &>>$LOG_FILE
-
+id expense &>>$LOGFILE
 if [ $? -ne 0 ]
 then
-    useradd expense &>>$LOG_FILE
-    VALIDATE_FUN $? "USER CREATING"
+    useradd expense &>>$LOGFILE
+    VALIDATE $? "Creating expense user"
 else
-    echo -e "$G USER ALREADY EXISTING $Y SKIPPING $N"
+    echo -e "Expense user already created...$Y SKIPPING $N"
 fi
 
-mkdir -p /app &>>$LOG_FILE
+mkdir -p /app &>>$LOGFILE
+VALIDATE $? "Creating app directory"
 
-curl -o /tmp/backend.zip https://expense-builds.s3.us-east-1.amazonaws.com/expense-backend-v2.zip &>> $LOG_FILE
+curl -o /tmp/backend.zip https://expense-builds.s3.us-east-1.amazonaws.com/expense-backend-v2.zip &>>$LOGFILE
+VALIDATE $? "Downloading backend code"
 
 cd /app
 rm -rf /app/*
+unzip /tmp/backend.zip &>>$LOGFILE
+VALIDATE $? "Extracted backend code"
 
-unzip /tmp/backend.zip &>>$LOG_FILE
-VALIDATE_FUN $? "UNZIP THE FILE"
+npm install &>>$LOGFILE
+VALIDATE $? "Installing nodejs dependencies"
 
-npm install &>>$LOG_FILE
-VALIDATE_FUN $? "NPM DEPENDENCIES INSTALLING"
+#check your repo and path
+cp /home/ec2-user/expensescript/backend.service /etc/systemd/system/backend.service &>>$LOGFILE
+VALIDATE $? "Copied backend service"
 
-cp /home/ec2-user/expensescript/backend.service /etc/systemd/system/backend.service
-VALIDATE_FUN $? "COPIED backend.service"
+systemctl daemon-reload &>>$LOGFILE
+VALIDATE $? "Daemon Reload"
 
-systemctl daemon-reload &>>$LOG_FILE
+systemctl start backend &>>$LOGFILE
+VALIDATE $? "Starting backend"
 
-systemctl start backend &>>$LOG_FILE
+systemctl enable backend &>>$LOGFILE
+VALIDATE $? "Enabling backend"
 
-systemctl enable backend &>>$LOG_FILE
-VALIDATE_FUN $? "daemon reload, start and enable successfully"
+dnf install mysql -y &>>$LOGFILE
+VALIDATE $? "Installing MySQL Client"
 
-dnf install mysql -y &>> $LOG_FILE
-VALIDATE_FUN $? "INSTALL MYSQL IN BACKEND SCRIPT"
+mysql -h 172.31.45.100 -uroot -p${mysql_root_password} < /app/schema/backend.sql &>>$LOGFILE
+VALIDATE $? "Schema loading"
 
-mysql -h 172.31.45.100 -uroot -p${mysqlpassword} < /app/schema/backend.sql &>>$LOG_FILE
-VALIDATE_FUN $? "attach the mysql with backend"
-
-systemctl restart backend &>>$LOG_FILE
-VALIDATE_FUN $? "Restarting the backend"
-
-dnf install git -y &>>$LOG_FILE
-VALIDATE_FUN $? "INSTALLIN GIT"
-
-
+systemctl restart backend &>>$LOGFILE
+VALIDATE $? "Restarting Backend"
